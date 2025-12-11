@@ -9,10 +9,6 @@ st.set_page_config(
     layout="wide"
 )
 
-# ===============================
-# Load Dataset
-# ===============================
-
 @st.cache_data
 def load_data():
     df = pd.read_csv("data/apple_music_10000.csv")  # ← UPDATE filename if different
@@ -38,9 +34,7 @@ def load_data():
 
 df = load_data()
 
-# ===============================
-# Sidebar Navigation
-# ===============================
+
 
 st.sidebar.title("🎧 Apple Music Dashboard")
 page = st.sidebar.radio(
@@ -48,9 +42,7 @@ page = st.sidebar.radio(
     ["Overview", "Genres", "Artists", "Trends", "Explicit Content", "Albums"]
 )
 
-# ===============================
-# PAGE 1 — OVERVIEW
-# ===============================
+
 
 if page == "Overview":
     st.title("📀 Apple Music 10,000 Track Dataset — Overview")
@@ -64,14 +56,11 @@ if page == "Overview":
     st.subheader("Missing Values")
     st.write(df.isna().sum())
 
-# ===============================
-# PAGE 2 — GENRES
-# ===============================
 
 elif page == "Genres":
     st.title("🎼 Genre Analysis")
 
-    # Genre selection filter
+
     genres = df['primaryGenreName'].unique()
     selected_genre = st.sidebar.selectbox("Filter by Genre", sorted(genres))
 
@@ -80,7 +69,7 @@ elif page == "Genres":
     st.write(f"### Tracks in Genre: **{selected_genre}** ({len(filtered)} tracks)")
     st.dataframe(filtered[['trackName', 'artistName', 'releaseYear', 'trackTimeMin']])
 
-    # Plot — Genre Distribution
+
     st.subheader("Top Genres Distribution")
 
     fig, ax = plt.subplots(figsize=(10, 4))
@@ -89,7 +78,7 @@ elif page == "Genres":
     ax.set_ylabel("Count")
     st.pyplot(fig)
 
-    # Plot — Duration by Genre
+
     st.subheader("Track Duration by Genre")
 
     fig2, ax2 = plt.subplots(figsize=(12, 6))
@@ -98,14 +87,12 @@ elif page == "Genres":
     ax2.set_title("Duration (minutes) by Genre")
     st.pyplot(fig2)
 
-# ===============================
-# PAGE 3 — ARTISTS
-# ===============================
+
 
 elif page == "Artists":
     st.title("🎤 Artist Analysis")
 
-    # Artist selector
+
     artists = df['artistName'].value_counts().head(100).index
     selected_artist = st.sidebar.selectbox("Choose an Artist", artists)
 
@@ -114,7 +101,7 @@ elif page == "Artists":
     st.write(f"### Tracks by {selected_artist}")
     st.dataframe(artist_df[['trackName', 'collectionName', 'releaseYear', 'trackTimeMin']])
 
-    # Top artists plot
+
     st.subheader("Top 20 Most Frequent Artists")
 
     fig, ax = plt.subplots(figsize=(10, 4))
@@ -122,14 +109,12 @@ elif page == "Artists":
     ax.set_title("Top Artists")
     st.pyplot(fig)
 
-# ===============================
-# PAGE 4 — TRENDS
-# ===============================
+
 
 elif page == "Trends":
     st.title("📈 Time & Seasonal Trends")
 
-    # Release Year Trend
+
     st.subheader("Tracks Released Per Year")
 
     fig, ax = plt.subplots(figsize=(10, 4))
@@ -138,7 +123,7 @@ elif page == "Trends":
     ax.set_ylabel("Count")
     st.pyplot(fig)
 
-    # Release Month Trend
+ 
     st.subheader("Tracks Released Per Month")
 
     fig2, ax2 = plt.subplots(figsize=(10, 4))
@@ -146,7 +131,7 @@ elif page == "Trends":
     ax2.set_title("Release Month Distribution")
     st.pyplot(fig2)
 
-    # Heatmap: Genre x Month
+
     st.subheader("Genre Release Frequency by Month (Heatmap)")
     genre_month = pd.crosstab(df['primaryGenreName'], df['releaseMonth'])
 
@@ -155,14 +140,12 @@ elif page == "Trends":
     ax3.set_title("Heatmap: Genre vs Release Month")
     st.pyplot(fig3)
 
-# ===============================
-# PAGE 5 — EXPLICIT CONTENT
-# ===============================
+
 
 elif page == "Explicit Content":
     st.title("🔞 Explicit Content Analysis")
 
-    # Explicit ratio by genre
+
     st.subheader("Explicit Ratio by Genre")
 
     explicit_by_genre = df.groupby('primaryGenreName')['isExplicit'].mean().sort_values(ascending=False)
@@ -173,7 +156,7 @@ elif page == "Explicit Content":
     ax.set_ylabel("Percentage Explicit")
     st.pyplot(fig)
 
-    # Pie chart
+
     st.subheader("Overall Explicit vs Non-Explicit")
 
     explicit_counts = df['isExplicit'].value_counts()
@@ -183,14 +166,12 @@ elif page == "Explicit Content":
     ax2.set_title("Explicit Content Breakdown")
     st.pyplot(fig2)
 
-# ===============================
-# PAGE 6 — ALBUMS
-# ===============================
+
 
 elif page == "Albums":
     st.title("💽 Album Structure Analysis")
 
-    # Tracks per album
+
     st.subheader("Distribution of Tracks Per Album")
 
     album_track_counts = df.groupby('collectionId')['trackCount'].max()
@@ -200,7 +181,7 @@ elif page == "Albums":
     ax.set_title("Tracks Per Album Distribution")
     st.pyplot(fig)
 
-    # Show albums of top artist
+
     st.subheader("Explore Albums by Artist")
 
     artists = df['artistName'].value_counts().index
